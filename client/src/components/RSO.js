@@ -3,7 +3,7 @@ import React from 'react';
 function RSO() {
     return (
         <div>
-            <h1>RSO Page</h1>
+            <h2>RSO Page</h2>
             <p>Welcome to the RSO page!</p>
         </div>
     );
