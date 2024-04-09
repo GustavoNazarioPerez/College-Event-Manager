@@ -1,0 +1,21 @@
+name: Start Server on Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies and build project
+        run: |
+          cd client
+          npm install
+          npm run build
+          npm run start-ci

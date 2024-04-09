@@ -1,0 +1,14 @@
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px; /* Adjust spacing between navbar items */
+}
+
+nav ul li a {
+    text-decoration: none;
+}
