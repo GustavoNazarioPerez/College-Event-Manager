@@ -15,7 +15,10 @@ exports.createSchool = (req, res) => {
     // Create
     const school = {
         domain: req.body.domain,
-        schoolName: req.body.schoolName
+        schoolName: req.body.schoolName,
+        location: req.body.location,
+        numStudents: req.body.numStudents,
+        super_id: req.body.super_id
     };
 
     // Create school in database
@@ -58,3 +61,22 @@ exports.findSchoolByDomain = (req, res) => {
         });
     });
 };
+
+// Get a school by its superadmin 
+exports.findSchoolBySuper = (req, res) => {
+    const super_id = req.params.super_id;
+
+    Schools.findOne({ where: { super_id: super_id} }).then(data => {
+        if (data) {
+            res.send(data);
+        } else {
+            res.status(404).send({
+                message: `Cannot find School with superadmin= ${super_id}`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: `Error retrieving School with domain= ${super_id}`
+        });
+    });
+}

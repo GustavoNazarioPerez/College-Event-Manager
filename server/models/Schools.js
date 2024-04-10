@@ -9,6 +9,19 @@ module.exports = (sequelize, DataTypes) => {
         schoolName: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        location: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        numStudents: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        super_id: {
+            // super admin id
+            type: DataTypes.INTEGER,
+            allownull: false,
         }
     });
 

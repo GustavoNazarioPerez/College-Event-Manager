@@ -43,6 +43,9 @@ db.Sequelize = Sequelize;
 db.Schools = require('./Schools.js')(sequelize, Sequelize);
 db.Users = require('./Users.js')(sequelize, Sequelize);
 db.RSOs = require('./RSOs.js')(sequelize, Sequelize);
+db.RSO_members = require('./RSO_members.js')(sequelize, Sequelize);
+db.Events = require('./Events.js')(sequelize, Sequelize);
+db.Event_members = require('./Event_members.js')(sequelize, Sequelize);
 
 // One school has many users
 db.Schools.hasMany(db.Users, { 
@@ -60,6 +63,22 @@ db.RSOs.belongsTo(db.Schools, {
   foreignKey: 'domain'
 });
 
+// One School has many Events
+db.Schools.hasMany(db.Events, {
+  foreignKey: 'domain'
+});
+db.Events.belongsTo(db.Schools, {
+  foreignKey: 'domain'
+});
+
+// One RSO has many Events
+db.RSOs.hasMany(db.Events, {
+  foreignKey: 'rso_id'
+});
+db.Events.belongsTo(db.RSOs, {
+  foreignKey: 'rso_id'
+});
+
 // Many RSOs have many users
 db.RSOs.belongsToMany(db.Users, {
   through: 'RSO_members',
@@ -72,5 +91,16 @@ db.Users.belongsToMany(db.RSOs, {
   foreignKey: 'user_id'
 });
 
+// Many Events have many Users
+db.Events.belongsToMany(db.Users, {
+  through: 'Event_members',
+  as: 'users',
+  foreignKey: 'event_id'
+});
+db.Users.belongsToMany(db.Events, {
+  through: 'Event_members',
+  as: 'events',
+  foreignKey: 'user_id'
+});
 
 module.exports = db;
