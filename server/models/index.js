@@ -71,12 +71,12 @@ db.Events.belongsTo(db.Schools, {
   foreignKey: 'domain'
 });
 
-// One RSO has many Events
+// One RSO has many Events 
 db.RSOs.hasMany(db.Events, {
   foreignKey: 'rso_id'
 });
 db.Events.belongsTo(db.RSOs, {
-  foreignKey: 'rso_id'
+   foreignKey: 'rso_id'
 });
 
 // Many RSOs have many users
