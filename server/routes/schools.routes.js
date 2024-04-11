@@ -12,5 +12,8 @@ module.exports = app => {
     // Get a school by domain
     router.get('/:domain', schools.findSchoolByDomain);
 
+    // Get a school by super admin id
+    router.get('/super/:super_id', schools.findSchoolByDomain);
+
     app.use('/api/schools', router);
 }

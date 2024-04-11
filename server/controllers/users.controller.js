@@ -98,8 +98,10 @@ exports.getUsersBySchool = (req, res) => {
 // Update user role
 exports.updateRole = (req, res) => {
     const id = req.params.id;
+    const newRole = req.body.roleid;
 
-    Users.update( req.body, {where: { id: id} }).then(num => {
+    Users.update( {roleid: newRole }, {where: { user_id: id} })
+    .then(num => {
         if (num == 1) {
             res.send({
                 message: `User with id: ${id}, role updated successfully`
