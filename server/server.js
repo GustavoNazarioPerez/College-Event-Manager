@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const db = require('./models');
+const cors = require('cors');
 
 // Sync Database
 db.sequelize.sync().then(() => {
@@ -11,6 +12,7 @@ db.sequelize.sync().then(() => {
 
 app.use(express.json());
 app.use(express.urlencoded( {extended: true }));
+app.use(cors());
 
 // Routers
 const schoolRouter = require('./routes/schools.routes')(app);

@@ -1,43 +1,16 @@
-import './App.css';
-import Navbar from "./components/Navbar";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Update import
-import Event from "./components/Event";
-import RSO from "./components/RSO";
-import {useState} from "react";
-import LoginSignupModal from "./components/LoginSignupModal";
-import Home from "./components/Home";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Routes
+import Login from './Login';
+import Signup from './Signup';
 
 function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [showModal, setShowModal] = useState(true); // Initially show the modal
-
-    const handleLogin = () => {
-        // Logic to handle successful login
-        setIsLoggedIn(true);
-        setShowModal(false); // Hide the modal after successful login
-    };
-
-    const handleLogout = () => {
-        // Logic to handle logout
-        setIsLoggedIn(false);
-        setShowModal(true); // Show the modal when logging out
-    };
-
     return (
         <Router>
-            <div className="App">
-                <h1>College Event Manager</h1>
-                {!isLoggedIn && showModal && <LoginSignupModal onLogin={handleLogin} />}
-                {isLoggedIn && (
-                    <div>
-                        <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-                        <Routes>
-                            <Route path="/" element={<Home />} /> {/* Use element prop */}
-                            <Route path="/event" element={<Event />} /> {/* Use element prop */}
-                            <Route path="/rso" element={<RSO />} /> {/* Use element prop */}
-                        </Routes>
-                    </div>
-                )}
+            <div>
+                <Routes> {/* Use Routes instead of Switch */}
+                    <Route path="/login" element={<Login />} /> {/* Specify the element prop */}
+                    <Route path="/signup" element={<Signup />} />
+                </Routes>
             </div>
         </Router>
     );
