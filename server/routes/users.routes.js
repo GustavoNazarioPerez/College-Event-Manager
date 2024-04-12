@@ -1,3 +1,4 @@
+const users = require("../controllers/users.controller");
 module.exports = app => {
     const users = require('../controllers/users.controller');
 
@@ -20,6 +21,9 @@ module.exports = app => {
 
     // Update user's role
     router.patch('/updateRole/:id', users.updateRole);
+
+    // Authenticate user
+    router.post('/authenticateUser', users.authenticateUser);
 
     app.use('/api/users', router);
 }

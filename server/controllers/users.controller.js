@@ -101,19 +101,60 @@ exports.updateRole = (req, res) => {
     const newRole = req.body.roleid;
 
     Users.update( {roleid: newRole }, {where: { user_id: id} })
-    .then(num => {
-        if (num == 1) {
-            res.send({
-                message: `User with id: ${id}, role updated successfully`
-            });
-        } else {
-            res.send({
-                message: `Cannot update user with id ${id}`
-            });
-        }
-    }).catch(err => {
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: `User with id: ${id}, role updated successfully`
+                });
+            } else {
+                res.send({
+                    message: `Cannot update user with id ${id}`
+                });
+            }
+        }).catch(err => {
         res.status(500).send({
             message: `Error updating user with id ${id}`
         });
     });
 }
+
+// Authenticate user by email and password
+exports.authenticateUser = (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+        res.status(400).send({
+            message: 'Email or password is missing'
+        });
+        return;
+    }
+
+    // Find user by email
+    Users.findOne({ where: { email: email } }).then(user => {
+        if (!user) {
+            res.status(404).send({
+                message: `User with email ${email} not found`
+            });
+            return;
+        }
+
+        // Check if password matches
+        if (user.password !== password) {
+            res.status(401).send({
+                message: 'Invalid password'
+            });
+            return;
+        }
+
+        // Authentication successful, return user id
+        res.send({
+            userId: user.id
+        });
+    }).catch(err => {
+        res.status(500).send({
+            message: 'Error authenticating user'
+        });
+    });
+};
