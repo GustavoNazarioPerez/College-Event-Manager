@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         text: {
             type: DataTypes.TEXT,
-            allowNull: false
+            allowNull: true
+        },
+        rating: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
     });
     return Comments;

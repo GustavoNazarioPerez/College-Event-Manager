@@ -29,6 +29,57 @@ exports.createComment = (req, res) => {
     });
 };
 
+// Create a rating
+exports.createRating = (req, res) => {
+    //validate
+    if (!req.body.rating) {
+        res.status(400).send({
+            message: 'Rating field cannot be empty'
+        });
+        return;
+    }
+
+    // Create
+    const comment = {
+        event_id: req.body.event_id,
+        user_id: req.body.user_id,
+        text: null,
+        rating: req.body.rating
+    };
+
+    // Add to db
+    Comments.create(comment).then(data => {
+        res.send(data);
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || 'Some error occured while creating Rating'
+        });
+    });
+};
+
+// Modify Comment
+exports.editComment = (req, res) => {
+    const comment_id = req.params.comment_id;
+    const newComment = req.body.text;
+
+    Comments.update( {text: newComment }, {where: { comment_id: comment_id} })
+    .then(num => {
+        if (num == 1) {
+            res.send({
+                message: `Comment with id: ${comment_id}, Modified successfully`
+            });
+        } else {
+            res.send({
+                message: `Cannot update comment with id ${comment_id}`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: `Error updating comment with id ${comment_id}`
+        });
+    });
+}
+
 // Delete Comment
 exports.deleteComment = (req, res) => {
     const comment_id = req.params.comment_id;

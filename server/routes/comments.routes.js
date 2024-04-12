@@ -6,8 +6,14 @@ module.exports = app => {
     // Create comment
     router.post('/createComment', comment.createComment);
 
+    // Create a rating comment
+    router.post('/createRating', comment.createRating);
+
     // Delete a comment
     router.delete('/deleteComment/:comment_id', comment.deleteComment);
+
+    // Modify a comment
+    router.patch('/editComment/:comment_id', comment.editComment);
 
     // Find Comments by user id
     router.get('/findUserComments/:user_id', comment.findUserComments);
