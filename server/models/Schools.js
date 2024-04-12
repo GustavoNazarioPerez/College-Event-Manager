@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         super_id: {
             // super admin id
             type: DataTypes.INTEGER,
-            allownull: false,
+            allownull: true,
         }
     });
 

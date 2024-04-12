@@ -4,6 +4,7 @@ import axios from 'axios';
 import './Login.css'; // Import login.css file
 
 function Signup() {
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('student');
@@ -31,7 +32,7 @@ function Signup() {
             const response = await axios.post('http://localhost:3001/api/users/createUser', {
                 email,
                 domain: email.substring(email.indexOf('@')), // Extract domain from email including "@"
-                name: '', // Blank name
+                name, // Blank name
                 password,
                 roleid: roleId // Send the integer role id to the backend
             });
@@ -40,6 +41,7 @@ function Signup() {
                 setSuccessMessage('Account was created! Please login via the login page');
                 setErrorMessage('');
                 // Clear form fields
+                setName('');
                 setEmail('');
                 setPassword('');
                 console.log(response);
@@ -63,6 +65,15 @@ function Signup() {
                 {errorMessage && <p className="error">{errorMessage}</p>}
                 {successMessage && <p className="success">{successMessage}</p>}
                 <form onSubmit={handleSubmit}>
+                    <div className='input-group'> {/* Apply class name for input group */}
+                        <label>Name</label>
+                        <input
+                            type="name"
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
                     <div className='input-group'> {/* Apply class name for input group */}
                         <label>Email</label>
                         <input
