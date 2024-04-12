@@ -46,6 +46,7 @@ db.RSOs = require('./RSOs.js')(sequelize, Sequelize);
 db.RSO_members = require('./RSO_members.js')(sequelize, Sequelize);
 db.Events = require('./Events.js')(sequelize, Sequelize);
 db.Event_members = require('./Event_members.js')(sequelize, Sequelize);
+db.Comments = require('./Comments.js')(sequelize, Sequelize);
 
 // One school has many users
 db.Schools.hasMany(db.Users, { 
@@ -77,6 +78,22 @@ db.RSOs.hasMany(db.Events, {
 });
 db.Events.belongsTo(db.RSOs, {
    foreignKey: 'rso_id'
+});
+
+// One Event has many Comments
+db.Events.hasMany(db.Comments, {
+  foreignKey: 'event_id'
+});
+db.Comments.belongsTo(db.Events, {
+   foreignKey: 'event_id'
+});
+
+// One User has many Comments
+db.Users.hasMany(db.Comments, {
+  foreignKey: 'user_id'
+});
+db.Comments.belongsTo(db.Users, {
+   foreignKey: 'user_id'
 });
 
 // Many RSOs have many users
