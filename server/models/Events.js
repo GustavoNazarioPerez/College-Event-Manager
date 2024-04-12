@@ -14,6 +14,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
+        date: {
+            type: DataTypes.DATE,
+            allowNull: false
+        },
+        time: {
+            type: DataTypes.TIME,
+            allowNull: false
+        },
+        contact_phone: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        contact_email: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         rso_id: {
             // set to null if university wide event
             type: DataTypes.INTEGER,

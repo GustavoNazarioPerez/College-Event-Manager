@@ -17,6 +17,10 @@ exports.createEvent = (req, res) => {
     const event = {
         event_name: req.body.event_name,
         event_desc: req.body.event_desc,
+        date: req.body.date,
+        time: req.body.time,
+        contact_phone: req.body.contact_phone,
+        contact_email: req.body.contact_email,
         rso_id: req.body.rso_id,
         domain: req.body.domain,
         is_public: req.body.is_public,
