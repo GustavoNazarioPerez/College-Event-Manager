@@ -150,7 +150,7 @@ exports.authenticateUser = (req, res) => {
 
         // Authentication successful, return user id
         res.send({
-            userId: user.id
+            userId: user.user_id
         });
     }).catch(err => {
         res.status(500).send({
