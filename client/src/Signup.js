@@ -15,13 +15,13 @@ function Signup() {
     const getRoleId = (role) => {
         switch (role) {
             case 'student':
-                return 1;
+                return 0;
             case 'admin':
-                return 2;
+                return 1;
             case 'superadmin':
-                return 3;
+                return 2;
             default:
-                return 1; // Default to student role
+                return 0; // Default to student role
         }
     };
 
@@ -97,7 +97,6 @@ function Signup() {
                         <select value={role} onChange={(e) => setRole(e.target.value)}>
                             <option value="student">Student</option>
                             <option value="admin">Admin</option>
-                            <option value="superadmin">Super Admin</option>
                         </select>
                     </div>
                     <button type="submit">Sign Up</button>
