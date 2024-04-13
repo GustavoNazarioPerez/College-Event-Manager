@@ -13,6 +13,21 @@ exports.createEvent = (req, res) => {
         return;
     }
 
+    const rso_id = req.body.rso_id;
+    const is_public = req.body.is_public;
+    var approved = null;
+
+    if(rso_id == null & is_public == false) {
+        // Private event is approved
+        approved = true;
+    } else if (rso_id != null) {
+        // RSO event is approved
+        approved = true;
+    } else {
+        // Public event needs approval
+        approved = false;
+    }
+
     // Create
     const event = {
         event_name: req.body.event_name,
@@ -22,12 +37,11 @@ exports.createEvent = (req, res) => {
         time: req.body.time,
         contact_phone: req.body.contact_phone,
         contact_email: req.body.contact_email,
-        rso_id: req.body.rso_id,
+        rso_id: rso_id,
         domain: req.body.domain,
-        is_public: req.body.is_public,
-        approved: false
-    };
-
+        is_public: is_public,
+        approved: approved
+    }
     // Add to db
     Events.create(event).then(data => {
         res.send(data);
@@ -182,7 +196,7 @@ exports.findPendingPublic = (req, res) => {
     });
 };
 
-// Find all Approved Private Events (domain)
+// Find all Private Events (domain)
 exports.findAllPrivate = (req, res) => {
     const domain = req.params.domain
 
@@ -231,7 +245,7 @@ exports.findPendingPrivate = (req, res) => {
 };
 
 // Find all RSO events (domain)
-exports.findRSOEvents = (req, res) => {
+exports.findAllRSOEvents = (req, res) => {
     const domain = req.params.domain
 
     Events.findAll({ where: { 
@@ -250,6 +264,30 @@ exports.findRSOEvents = (req, res) => {
     }).catch(err => {
         res.status(500).send({
             message: `Error retrieving all RSO events`
+        });
+    });
+};
+
+// Find all RSO events (rso_id)
+exports.findRSOEvents = (req, res) => {
+    const rso_id = req.params.rso_id
+
+    Events.findAll({ where: { 
+        is_public : null, 
+        approved: true,
+        rso_id: rso_id
+    
+    }}).then(data => {
+        if (data) {
+            res.send(data);
+        } else {
+            res.status(404).send({
+                message: `Cannot find RSO events with id=${rso_id}`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: `Error retrieving RSO events with id=${rso_id}`
         });
     });
 };

@@ -19,15 +19,15 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         date: {
-            type: DataTypes.DATE,
+            type: DataTypes.STRING,
             allowNull: false
         },
         time: {
-            type: DataTypes.TIME,
+            type: DataTypes.STRING,
             allowNull: false
         },
         contact_phone: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: false
         },
         contact_email: {
@@ -51,7 +51,6 @@ module.exports = (sequelize, DataTypes) => {
         approved: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
-            dafaultValue: false
         }
     });
 

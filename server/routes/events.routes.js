@@ -34,10 +34,13 @@ module.exports = app => {
     router.get('/findPendingPrivate/:domain', event.findPendingPrivate);
 
     // Find approved RSO events
-    router.get('/findRSOEvents/:domain', event.findRSOEvents);
+    router.get('/findAllRSOEvents/:domain', event.findAllRSOEvents);
 
     // Find unapproved RSO events
     router.get('/findPendingRSOEvents/:domain', event.findPendingRSOEvents);
+    
+    // Find RSO events by rso_id
+    router.get('/findRSOEvents/:rso_id', event.findRSOEvents);
 
     // Find events that User is registered for
     router.get('/findUsersEvents/:user_id', event.findUsersEvents);
