@@ -60,6 +60,8 @@ function Login() {
                     <button type="submit">Login</button>
                 </form>
                 <Link to="/signup">Don't have an account? Sign Up</Link>
+                <br/>
+                <Link to="/register">Register a school as Superadmin</Link>
             </div>
         </div>
     );

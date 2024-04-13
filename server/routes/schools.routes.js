@@ -15,5 +15,8 @@ module.exports = app => {
     // Get a school by super admin id
     router.get('/super/:super_id', schools.findSchoolByDomain);
 
+    // Set superadmin
+    router.patch('/setSuper/:domain', schools.setSuperAdmin);
+
     app.use('/api/schools', router);
 }

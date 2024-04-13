@@ -80,3 +80,25 @@ exports.findSchoolBySuper = (req, res) => {
         });
     });
 }
+
+exports.setSuperAdmin = (req,res) => {
+    const domain = req.params.domain;
+    const user_id = req.body.super_id
+
+    Schools.update( {super_id: user_id }, {where: { domain: domain} })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: `School with domain: ${domain}, super admin set successfully`
+                });
+            } else {
+                res.send({
+                    message: `Cannot set super admin to school with domain ${domain}`
+                });
+            }
+        }).catch(err => {
+        res.status(500).send({
+            message: `Error setting super id to school with domain ${domain}`
+        });
+    });
+}
