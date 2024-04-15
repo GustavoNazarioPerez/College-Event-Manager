@@ -1,0 +1,22 @@
+/* Event.css */
+
+.rsoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px; /* Add padding to the grid container */
+}
+
+.rsoCard {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin: 10px; /* Add margin around each event card */
+}
+
+.rsoCard:hover {
+    transform: translateY(-5px);
+}
