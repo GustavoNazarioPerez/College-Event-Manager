@@ -21,5 +21,8 @@ module.exports = app => {
     // Find Comments by event id
     router.get('/findEventComments/:event_id', comment.findEventComments);
 
+    // Find rating by event id
+    router.get('/findEventRatings/:event_id', comment.findEventRatings);
+
     app.use('/api/comments', router);
 }

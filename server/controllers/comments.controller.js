@@ -16,6 +16,7 @@ exports.createComment = (req, res) => {
     const comment = {
         event_id: req.body.event_id,
         user_id: req.body.user_id,
+        name: req.body.name,
         text: req.body.text
     };
 
@@ -43,6 +44,7 @@ exports.createRating = (req, res) => {
     const comment = {
         event_id: req.body.event_id,
         user_id: req.body.user_id,
+        name: req.body.name,
         text: null,
         rating: req.body.rating
     };
@@ -125,7 +127,7 @@ exports.findUserComments = (req, res) => {
 exports.findEventComments = (req, res) => {
     const event_id = req.params.event_id;
 
-    Comments.findAll({ where: { event_id: event_id}}).then(data => {
+    Comments.findAll({ where: { event_id: event_id, rating: null}}).then(data => {
         if (data) {
             res.send(data);
         } else {
@@ -136,6 +138,25 @@ exports.findEventComments = (req, res) => {
     }).catch(err => {
         res.status(500).send({
             message: `Error retrieving Comments with event id= ${event_id}`
+        });
+    });
+}
+
+// Find ratings by Event id
+exports.findEventRatings = (req, res) => {
+    const event_id = req.params.event_id;
+
+    Comments.findAll({ where: { event_id: event_id, text: null}}).then(data => {
+        if (data) {
+            res.send(data);
+        } else {
+            res.status(404).send({
+                message: `Cannot find Ratings with event id= ${event_id}`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: `Error retrieving Ratings with event id= ${event_id}`
         });
     });
 }
