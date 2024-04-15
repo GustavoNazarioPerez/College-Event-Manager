@@ -148,9 +148,10 @@ exports.authenticateUser = (req, res) => {
             return;
         }
 
-        // Authentication successful, return user id
+        // Authentication successful, return user id and name
         res.send({
-            userId: user.user_id
+            userId: user.user_id,
+            name: user.name
         });
     }).catch(err => {
         res.status(500).send({

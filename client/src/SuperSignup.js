@@ -69,6 +69,9 @@ function SuperSignup() {
                 setName('');
                 setEmail('');
                 setPassword('');
+                setSchoolName('');
+                setLocation('');
+                setNumStudents('');
                 console.log(superResponse);
             } else {
                 // Display error message and reset success message
