@@ -21,6 +21,9 @@ module.exports = app => {
     // Find users by rso id
     router.get('/findUsers/:rso_id', rso.findUsersInRSO);
 
+    // find num users by rso id (Data is numUsers)
+    router.get('/findNumUsers/:rso_id', rso.findNumUsers);
+
     // Remove user from an RSO
     router.delete('/removeUser', rso.removeUserFromRSO);
     
