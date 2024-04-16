@@ -130,3 +130,19 @@ exports.removeUserFromRSO = (req, res) => {
         });
     });
 };
+
+// Find number of users in rso_id
+exports.findNumUsers = (req, res) => {
+    const rso_id = req.params.rso_id;
+
+    RSO_members.findAll({
+        attributes: [[db.Sequelize.fn('COUNT', db.Sequelize.col('rso_id')), 'numUsers']],
+        where: { rso_id: rso_id }
+    }).then(data => {
+        res.send(data);
+    }).catch(err => {
+        res.status(500).send({
+            message: err.message || 'Some error occurred while retrieving number of users in RSO'
+        });
+    });
+};
