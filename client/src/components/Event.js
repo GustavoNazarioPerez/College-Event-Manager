@@ -181,7 +181,6 @@ function Event() {
                     apiUrlList.push(superUrl);
                 }
 
-
                 for (const rsoId of rsosArray) {
                     const rsoIdVal = rsoId.rso_id;
                     const apiUrl = `http://localhost:3001/api/events/findRSOEvents/${rsoIdVal}`;
@@ -193,7 +192,6 @@ function Event() {
 
                 responses.forEach(response => {
                     const eventDataList = response.data;
-
                     eventDataList.forEach(eventData => {
                         if (!events.some(event => event.id === eventData.id)) {
                             newEvents.push(eventData);
@@ -255,6 +253,7 @@ function Event() {
 
     // Function to handle event deletion
     const handleDeleteEvent = async (eventId) => {
+
         // Check if eventId is a valid integer
         if (!Number.isInteger(eventId)) {
             console.error('Invalid eventId:', eventId);
@@ -286,7 +285,7 @@ function Event() {
         if (roleid === '2' && selectedEvent.domain === domain) { // Ensure to compare as strings since localStorage returns strings
             return (
                 <button onClick={() => {
-                    handleDeleteEvent();
+                    handleDeleteEvent(selectedEvent.event_id);
                     setSelectedEvent(null);
                 }}>Delete Event</button>
             );
@@ -330,8 +329,10 @@ function Event() {
         // Set publicBool based on category
         if (selectedCategory === 'public') {
             setPublic(true);
-        } else {
+        } else if (selectedCategory === 'private') {
             setPublic(false);
+        } else {
+            setPublic(null);
         }
 
         // Reset RSO ID if category is not RSO
