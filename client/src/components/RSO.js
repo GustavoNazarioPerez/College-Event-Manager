@@ -7,9 +7,11 @@ import axios from 'axios';
 
 function RSO() {
     const [userID, setUserID] = useState('');
+    const [orgName, setOrgName] = useState('');
     const [domainRSOs, setDomainRSOs] = useState([]);
     const [userRSOs, setUserRSOs] = useState([]);
     const [rsos, setRSOs] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
     const navigate = useNavigate();
 
     const handleSignOut = () => {
@@ -52,12 +54,56 @@ function RSO() {
     // Function to render create button if role ID is 2
     const renderCreateButton = () => {
         const roleid = localStorage.getItem('roleid');
-        if (roleid === '1') { // Ensure to compare as strings since localStorage returns strings
-            return (<button>Create RSO</button>);
+        if (roleid !== '2') { // Ensure to compare as strings since localStorage returns strings
+            return (<button onClick={openModal}>Create RSO</button>);
         } else {
             return null;
         }
     };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCreateRSO = async () => {
+        try {
+            // Make API request to create event
+            await axios.post(`http://localhost:3001/api/rso/createRSO`, {
+                orgName,
+                domain: localStorage.getItem('domain'),
+                admin_id: localStorage.getItem('userId')
+            });
+        } catch (error) {
+            console.error('Error creating rso:', error);
+        }
+
+        closeModal();
+    }
+
+    // Modal content JSX
+    const modalContent = (
+        <div className="modal">
+            <div className="modal-content">
+                <h2>Create RSO</h2>
+                <form onSubmit={handleCreateRSO}>
+                    <div className='input-group'> {/* Apply class name for input group */}
+                        <label>RSO Name</label>
+                        <input
+                            type="name"
+                            placeholder="Name"
+                            value={orgName}
+                            onChange={(e) => setOrgName(e.target.value)}
+                        />
+                    </div>
+                    <button type="submit">Create!</button>
+                </form>
+            </div>
+        </div>
+    );
 
     const getUserRSOs = async () => {
         const userId = localStorage.getItem('userId');
@@ -121,6 +167,7 @@ function RSO() {
             <div>
                 {renderCreateButton()}
             </div>
+            {isModalOpen && modalContent}
             {rsos.length > 0 && (
                 <div className="rsoGrid">
                     {rsos.map(rso => (
