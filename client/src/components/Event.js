@@ -25,6 +25,7 @@ function Event() {
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
     const [type, setType] = useState('');
+    const [location, setLocation] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [phone, setPhone] = useState('');
@@ -358,7 +359,7 @@ function Event() {
             return;
         }
 
-        if (response && response.data.admin_id != userID) {
+        if (category === 'rso' && response && response.data.admin_id != userID) {
             console.log(response);
             console.log(response.admin_id);
             console.log(userID);
@@ -376,9 +377,16 @@ function Event() {
         }
 
         console.log(numResponse.data[0].numUsers);
-        if (numResponse && numResponse.data[0].numUsers < 5) {
+        if (category === 'rso' && numResponse && numResponse.data[0].numUsers < 5) {
             console.log("This RSO is inactive, you must have at least 5 members");
             setErrorMessage("This RSO is inactive, you must have at least 5 members");
+            return;
+        }
+
+        const duplicateEvent = events.find(event => event.location === location && event.time === time && event.date === date);
+        if (duplicateEvent) {
+            console.log(`An event already exists on ${date} at ${location} at ${time}, the event is ${duplicateEvent.event_name}`);
+            setErrorMessage(`An event already exists on ${date} at ${location} at ${time}, the event is ${duplicateEvent.event_name}`);
             return;
         }
 
@@ -388,6 +396,7 @@ function Event() {
                 event_name: name,
                 event_desc: desc,
                 event_type: type,
+                location: location,
                 date: date,
                 time: time,
                 contact_phone: phone,
@@ -435,6 +444,15 @@ function Event() {
                             placeholder="Tech Talk, Social, Fundraising..."
                             value={type}
                             onChange={(e) => setType(e.target.value)}
+                        />
+                    </div>
+                    <div className='input-group'> {/* Apply class name for input group */}
+                        <label>Location</label>
+                        <input
+                            type="location"
+                            placeholder="Student Union, Gym..."
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
                         />
                     </div>
                     <div className='input-group'> {/* Apply class name for input group */}
