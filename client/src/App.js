@@ -12,7 +12,7 @@ function App() {
 
     // Check if the user is logged in (you can implement this logic based on your session)
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         if (userId) {
             setLoggedIn(true);
         } else {

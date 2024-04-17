@@ -12,54 +12,91 @@ function RSO() {
     const [userRSOs, setUserRSOs] = useState([]);
     const [rsos, setRSOs] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+    const [errorMessage, setErrorMessage] = useState(false); // State for modal
+    const [successMessage, setSuccessMessage] = useState(false); // State for modal
     const navigate = useNavigate();
 
     const handleSignOut = () => {
-        // Clear userId from localStorage
-        localStorage.removeItem('userId');
+        // Clear userId from sessionStorage
+        sessionStorage.removeItem('userId');
         // Redirect to login page
         navigate('/login');
     };
 
-    const handleJoin = async (rso_id) => {
-        const savedUser = localStorage.getItem('userId');
+    const handleJoin = async (rso) => {
+        setErrorMessage('');
+        setSuccessMessage('');
+        const savedUser = sessionStorage.getItem('userId');
+        let numUsers = null;
         try {
             await axios.post(`http://localhost:3001/api/rso/joinRSO`, {
-                rso_id,
+                rso_id: rso.rso_id,
                 user_id: savedUser
             });
             console.log("Successfully joined RSO");
             await getUserRSOs();
+            numUsers = await getNumberOfUsers(rso.rso_id);
         } catch (error) {
             console.error('Error joining an RSO:', error);
         }
+
+        console.log(numUsers);
+        if (numUsers && numUsers == 5) {
+            setSuccessMessage(`There are now 5 members in RSO: "${rso.orgName}". The RSO is active!`);
+        }
     };
 
-    const handleLeave = async (rso_id) => {
-        const savedUser = localStorage.getItem('userId');
+    const handleLeave = async (rso) => {
+        setErrorMessage('');
+        setSuccessMessage('');
+        const savedUser = sessionStorage.getItem('userId');
+        let numUsers = null;
+
+        if (savedUser == rso.admin_id) {
+            setErrorMessage("You can not leave the RSO as you are the sole administrator");
+            return;
+        }
+
         try {
             await axios.delete(`http://localhost:3001/api/rso/removeUser`, {
                 data: {
-                    rso_id,
+                    rso_id: rso.rso_id,
                     user_id: savedUser
                 }
             });
             console.log("Successfully left RSO");
             await getUserRSOs();
+            numUsers = await getNumberOfUsers(rso.rso_id);
         } catch (error) {
             console.error('Error leaving an RSO:', error);
+        }
+
+        console.log(numUsers);
+        if (numUsers && numUsers == 4) {
+            setErrorMessage(`There are now 4 members in RSO: "${rso.orgName}". The RSO is inactive!`);
         }
     };
 
     // Function to render create button if role ID is 2
     const renderCreateButton = () => {
-        const roleid = localStorage.getItem('roleid');
-        if (roleid !== '2') { // Ensure to compare as strings since localStorage returns strings
+        const roleid = sessionStorage.getItem('roleid');
+        if (roleid !== '2') { // Ensure to compare as strings since sessionStorage returns strings
             return (<button onClick={openModal}>Create RSO</button>);
         } else {
             return null;
         }
     };
+
+    const getNumberOfUsers = async (rsoID) => {
+        let numResponse = null;
+        try {
+            numResponse = await axios.get(`http://localhost:3001/api/rso/findNumUsers/${rsoID}`);
+            return numResponse.data[0].numUsers;
+        } catch (error) {
+            console.error('Error finding the number of users in the rso by ID:', error);
+            return null;
+        }
+    }
 
     const openModal = () => {
         setIsModalOpen(true);
@@ -69,16 +106,26 @@ function RSO() {
         setIsModalOpen(false);
     };
 
-    const handleCreateRSO = async () => {
+    const handleCreateRSO = async (e) => {
+        e.preventDefault();
+
+        let response = null;
+        const savedId = sessionStorage.getItem('userId');
         try {
+            console.log(savedId);
             // Make API request to create event
-            await axios.post(`http://localhost:3001/api/rso/createRSO`, {
+            response = await axios.post(`http://localhost:3001/api/rso/createRSO`, {
                 orgName,
-                domain: localStorage.getItem('domain'),
-                admin_id: localStorage.getItem('userId')
+                domain: sessionStorage.getItem('domain'),
+                admin_id: savedId
             });
         } catch (error) {
             console.error('Error creating rso:', error);
+        }
+
+        if (response) {
+            console.log(response.data.rso_id);
+            await handleJoin(response.data);
         }
 
         closeModal();
@@ -106,7 +153,7 @@ function RSO() {
     );
 
     const getUserRSOs = async () => {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
 
         try {
             const response = await axios.get(`http://localhost:3001/api/rso/findByUser/${userId}`)
@@ -117,15 +164,15 @@ function RSO() {
     };
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         setUserID(userId);
 
         const fetchData = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/users/id/${userId}`);
-                localStorage.setItem('data', response.data);
-                localStorage.setItem('domain', response.data.domain);
-                localStorage.setItem('roleid', response.data.roleid);
+                sessionStorage.setItem('data', response.data);
+                sessionStorage.setItem('domain', response.data.domain);
+                sessionStorage.setItem('roleid', response.data.roleid);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -138,7 +185,7 @@ function RSO() {
 
 
         const getDomainRSOs = async () => {
-            const savedDomain = localStorage.getItem('domain');
+            const savedDomain = sessionStorage.getItem('domain');
 
             try {
                 const modifiedDomain = savedDomain.replace("@", "");
@@ -168,6 +215,8 @@ function RSO() {
                 {renderCreateButton()}
             </div>
             {isModalOpen && modalContent}
+            {errorMessage && <p className="error">{errorMessage}</p>}
+            {successMessage && <p className="success">{successMessage}</p>}
             {rsos.length > 0 && (
                 <div className="rsoGrid">
                     {rsos.map(rso => (
@@ -178,10 +227,10 @@ function RSO() {
                                 {/* Render Join Button if RSO is in domainRSOs but not in userRSOs */}
                                 {domainRSOs.some(domainRso => domainRso.rso_id === rso.rso_id) &&
                                     !userRSOs.some(userRso => userRso.rso_id === rso.rso_id) &&
-                                    <button onClick={() => handleJoin(rso.rso_id)}>Join RSO</button>}
+                                    <button onClick={() => handleJoin(rso)}>Join RSO</button>}
                                 {/* Render Leave Button if RSO is in userRSOs */}
                                 {userRSOs.some(userRso => userRso.rso_id === rso.rso_id) &&
-                                    <button onClick={() => handleLeave(rso.rso_id)}>Leave RSO</button>}
+                                    <button onClick={() => handleLeave(rso)}>Leave RSO</button>}
                             </div>
                         </React.Fragment>
                     ))}

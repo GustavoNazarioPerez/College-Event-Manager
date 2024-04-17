@@ -20,8 +20,8 @@ function Login() {
             console.log(response);
             // Check the response data to determine if the login attempt was successful
             if (response.status === 200) {
-                localStorage.setItem('userId', response.data.userId); // Store user ID in localStorage
-                localStorage.setItem('name', response.data.name); // Store Users's name in localStorage
+                sessionStorage.setItem('userId', response.data.userId); // Store user ID in sessionStorage
+                sessionStorage.setItem('name', response.data.name); // Store Users's name in sessionStorage
                 navigate('/home'); // Redirect to home page after successful login
             } else {
                 // Handle login error
