@@ -7,15 +7,15 @@ function Home() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Get userId from localStorage
-        const userId = localStorage.getItem('userId');
+        // Get userId from sessionStorage
+        const userId = sessionStorage.getItem('userId');
         // Log userId to console
         console.log('User ID:', userId);
     }, []); // Run this effect only once after the component mounts
 
     const handleSignOut = () => {
-        // Clear userId from localStorage
-        localStorage.removeItem('userId');
+        // Clear userId from sessionStorage
+        sessionStorage.removeItem('userId');
         // Redirect to login page
         navigate('/login');
     };

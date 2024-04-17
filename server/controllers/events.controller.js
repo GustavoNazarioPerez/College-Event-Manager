@@ -203,6 +203,7 @@ exports.findAllPrivate = (req, res) => {
     Events.findAll({ where: { 
         is_public : false, 
         approved: true,
+        rso_id: null,
         domain: domain
     
     }}).then(data => {

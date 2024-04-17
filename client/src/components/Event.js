@@ -5,6 +5,8 @@ import './Event.css'; // Importing regular CSS file
 import axios from 'axios';
 
 function Event() {
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [comments, setComments] = useState({});
     const [newComment, setNewComment] = useState('');
@@ -32,7 +34,7 @@ function Event() {
     const [publicBool, setPublic] = useState(true);
 
     const handleEventClick = (event) => {
-        localStorage.setItem('current_event_id', event.event_id)
+        sessionStorage.setItem('current_event_id', event.event_id)
         setSelectedEvent(event);
     };
 
@@ -46,15 +48,15 @@ function Event() {
         try {
             // Create Comment
             const submissionComment = await axios.post('http://localhost:3001/api/comments/createComment', {
-                event_id: localStorage.getItem('current_event_id'),
-                user_id: localStorage.getItem('userId'),
-                name: localStorage.getItem('name'),
+                event_id: sessionStorage.getItem('current_event_id'),
+                user_id: sessionStorage.getItem('userId'),
+                name: sessionStorage.getItem('name'),
                 text: newComment
             });
             if (submissionComment.status === 200) {
                 console.log(submissionComment);
                 setNewComment('');
-                setSelectedEvent(localStorage.getItem('current_event_id'));
+                setSelectedEvent(sessionStorage.getItem('current_event_id'));
             } else {
                 console.log('error creating comment');
             }
@@ -78,7 +80,7 @@ function Event() {
             });
             if (edit.status === 200) {
                 console.log(edit);
-                setSelectedEvent(localStorage.getItem('current_event_id')); // just refreshes
+                setSelectedEvent(sessionStorage.getItem('current_event_id')); // just refreshes
             } else {
                 console.log('Error editing comment');
             }
@@ -97,7 +99,7 @@ function Event() {
             const deletion = await axios.delete(`http://localhost:3001/api/comments/deleteComment/${comment_id}`);
             if (deletion.status === 200) {
                 console.log(deletion);
-                setSelectedEvent(localStorage.getItem('current_event_id')); // just refreshes
+                setSelectedEvent(sessionStorage.getItem('current_event_id')); // just refreshes
             } else {
                 console.log('Error deleting comment');
             }
@@ -118,15 +120,15 @@ function Event() {
         try {
             // Create Comment
             const submissionRating = await axios.post('http://localhost:3001/api/comments/createRating', {
-                event_id: localStorage.getItem('current_event_id'),
-                user_id: localStorage.getItem('userId'),
-                name: localStorage.getItem('name'),
+                event_id: sessionStorage.getItem('current_event_id'),
+                user_id: sessionStorage.getItem('userId'),
+                name: sessionStorage.getItem('name'),
                 rating: newRating
             });
             if (submissionRating.status === 200) {
                 console.log(submissionRating);
                 setNewRating('');
-                setSelectedEvent(localStorage.getItem('current_event_id')); // Refreshes after submit
+                setSelectedEvent(sessionStorage.getItem('current_event_id')); // Refreshes after submit
             } else {
                 console.log('error creating Rating');
             }
@@ -138,15 +140,15 @@ function Event() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const userId = sessionStorage.getItem('userId');
         setUserID(userId);
 
         const fetchData = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/users/id/${userId}`);
-                localStorage.setItem('data', response.data);
-                localStorage.setItem('domain', response.data.domain);
-                localStorage.setItem('roleid', response.data.roleid);
+                sessionStorage.setItem('data', response.data);
+                sessionStorage.setItem('domain', response.data.domain);
+                sessionStorage.setItem('roleid', response.data.roleid);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -155,16 +157,16 @@ function Event() {
         const getRSOs = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/rso/findByUser/${userId}`);
-                localStorage.setItem('rsos', JSON.stringify(response.data));
+                sessionStorage.setItem('rsos', JSON.stringify(response.data));
             } catch (error) {
                 console.error('Error getting RSOs:', error);
             }
         };
 
         const getEvents = async () => {
-            const savedDomain = localStorage.getItem('domain');
-            const savedRoleID = localStorage.getItem('roleid');
-            const savedRSOs = localStorage.getItem('rsos');
+            const savedDomain = sessionStorage.getItem('domain');
+            const savedRoleID = sessionStorage.getItem('roleid');
+            const savedRSOs = sessionStorage.getItem('rsos');
             const rsosArray = JSON.parse(savedRSOs);
             try {
                 const modifiedDomain = savedDomain.replace("@", "");
@@ -181,7 +183,6 @@ function Event() {
                     apiUrlList.push(superUrl);
                 }
 
-
                 for (const rsoId of rsosArray) {
                     const rsoIdVal = rsoId.rso_id;
                     const apiUrl = `http://localhost:3001/api/events/findRSOEvents/${rsoIdVal}`;
@@ -193,7 +194,6 @@ function Event() {
 
                 responses.forEach(response => {
                     const eventDataList = response.data;
-
                     eventDataList.forEach(eventData => {
                         if (!events.some(event => event.id === eventData.id)) {
                             newEvents.push(eventData);
@@ -216,7 +216,7 @@ function Event() {
 
     useEffect(() => {
         // RETRIEVING COMMENTS AND COMMENTER NAMES (INCLUDING RATINGS)
-        const event_id = localStorage.getItem('current_event_id')
+        const event_id = sessionStorage.getItem('current_event_id')
         
         const getComments = async () => {
             try {
@@ -255,6 +255,7 @@ function Event() {
 
     // Function to handle event deletion
     const handleDeleteEvent = async (eventId) => {
+
         // Check if eventId is a valid integer
         if (!Number.isInteger(eventId)) {
             console.error('Invalid eventId:', eventId);
@@ -271,8 +272,8 @@ function Event() {
 
     // Function to render create button if role ID is 2
     const renderCreateButton = () => {
-        const roleid = localStorage.getItem('roleid');
-        if (roleid === '1') { // Ensure to compare as strings since localStorage returns strings
+        const roleid = sessionStorage.getItem('roleid');
+        if (roleid === '1') { // Ensure to compare as strings since sessionStorage returns strings
             return (<button onClick={openModal}>CreateEvent</button>);
         } else {
             return null;
@@ -281,12 +282,12 @@ function Event() {
 
     // Function to render delete button if role ID is 1
     const renderDeleteButton = () => {
-        const roleid = localStorage.getItem('roleid');
-        const domain = localStorage.getItem('domain');
-        if (roleid === '2' && selectedEvent.domain === domain) { // Ensure to compare as strings since localStorage returns strings
+        const roleid = sessionStorage.getItem('roleid');
+        const domain = sessionStorage.getItem('domain');
+        if (roleid === '2' && selectedEvent.domain === domain) { // Ensure to compare as strings since sessionStorage returns strings
             return (
                 <button onClick={() => {
-                    handleDeleteEvent();
+                    handleDeleteEvent(selectedEvent.event_id);
                     setSelectedEvent(null);
                 }}>Delete Event</button>
             );
@@ -297,8 +298,10 @@ function Event() {
 
 
     const handleSignOut = () => {
-        // Clear userId from localStorage
-        localStorage.removeItem('userId');
+        // Clear userId from sessionStorage
+        sessionStorage.removeItem('userId');
+        sessionStorage.removeItem('domain');
+        sessionStorage.removeItem('roleid');
         // Redirect to login page
         navigate('/login');
     };
@@ -321,6 +324,8 @@ function Event() {
         setCategory('');
         setPublic(true);
         setIsModalOpen(false);
+        setErrorMessage('');
+        setSuccessMessage('');
     };
 
     const handleCategoryChange = (e) => {
@@ -330,8 +335,10 @@ function Event() {
         // Set publicBool based on category
         if (selectedCategory === 'public') {
             setPublic(true);
-        } else {
+        } else if (selectedCategory === 'private') {
             setPublic(false);
+        } else {
+            setPublic(null);
         }
 
         // Reset RSO ID if category is not RSO
@@ -340,7 +347,41 @@ function Event() {
         }
     };
 
-    const handleCreateEvent = async () => {
+    const handleCreateEvent = async (e) => {
+        e.preventDefault();
+
+        let response = null;
+        try {
+            response = await axios.get(`http://localhost:3001/api/rso/findRSO/${rsoID}`);
+        } catch (error) {
+            console.error('Error finding the rso by ID:', error);
+            return;
+        }
+
+        if (response && response.data.admin_id != userID) {
+            console.log(response);
+            console.log(response.admin_id);
+            console.log(userID);
+            console.log("You are not the administrator of this RSO");
+            setErrorMessage("You are not the administrator of this RSO");
+            return;
+        }
+
+        let numResponse = null;
+        try {
+            numResponse = await axios.get(`http://localhost:3001/api/rso/findNumUsers/${rsoID}`);
+        } catch (error) {
+            console.error('Error finding the number of users in the rso by ID:', error);
+            return;
+        }
+
+        console.log(numResponse.data[0].numUsers);
+        if (numResponse && numResponse.data[0].numUsers < 5) {
+            console.log("This RSO is inactive, you must have at least 5 members");
+            setErrorMessage("This RSO is inactive, you must have at least 5 members");
+            return;
+        }
+
         try {
             // Make API request to create event
             await axios.post(`http://localhost:3001/api/events/createEvent`, {
@@ -352,20 +393,21 @@ function Event() {
                 contact_phone: phone,
                 contact_email: email,
                 rso_id: rsoID,
-                domain: localStorage.getItem('domain'),
+                domain: sessionStorage.getItem('domain'),
                 is_public: publicBool
             });
+            closeModal();
         } catch (error) {
             console.error('Error creating event:', error);
         }
-
-        closeModal();
     }
 
     // Modal content JSX
     const modalContent = (
         <div className="modal">
             <div className="modal-content">
+                {errorMessage && <p className="error">{errorMessage}</p>}
+                {successMessage && <p className="success">{successMessage}</p>}
                 <h2>Create Event</h2>
                 <form onSubmit={handleCreateEvent}>
                     <div className='input-group'> {/* Apply class name for input group */}
@@ -452,6 +494,7 @@ function Event() {
                     )}
                     <button type="submit">Create!</button>
                 </form>
+                <button onClick={closeModal}>Close</button>
             </div>
         </div>
     );
