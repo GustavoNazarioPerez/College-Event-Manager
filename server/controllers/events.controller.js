@@ -33,6 +33,7 @@ exports.createEvent = (req, res) => {
         event_name: req.body.event_name,
         event_desc: req.body.event_desc,
         event_type: req.body.event_type,
+        location: req.body.location,
         date: req.body.date,
         time: req.body.time,
         contact_phone: req.body.contact_phone,
